@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.11.7
+# v0.11.11
 
 using Markdown
 using InteractiveUtils
@@ -15,8 +15,8 @@ end
 
 # ╔═╡ 7cd4a358-ed6a-11ea-1ac6-6f9204a9697a
 begin
-	using Pkg, Flux, Plots
-	Pkg.activate(".")
+	using Pkg
+	using Flux, Plots, PlutoUI
 	function ingredients(path::String)
 		# https://github.com/fonsp/Pluto.jl/issues/115#issuecomment-661722426
 		name = Symbol(basename(path))
@@ -29,8 +29,9 @@ begin
 				 :(include($path))))
 		m
 	end
-	ingredients("model.jl")
-	model = build_model(Args())
+	M = ingredients("model.jl")
+	model = M.build_model(M.Args())
+	md"### Define the model"
 end
 
 # ╔═╡ 506e96d0-edfa-11ea-2165-17e39b78e479
@@ -40,12 +41,13 @@ begin
 	p = BSON.load("mnist_conv.bson")[:params]
 	# rand!.(p)
 	Flux.loadparams!(model, p)
+	md"### Load parameters"
 end
 
 # ╔═╡ edd9dcc6-ed60-11ea-24b8-ddabed89f7ce
 @bind img html"""
-<canvas width="200" height="200" style="display: block;"></canvas>
-<button>Clear</button>
+<canvas width="200" height="200" style="margin: auto; display: block;"></canvas>
+<button style="font-size:3ex; margin: auto; display: block">Clear</button>
 <script>
 const canvas = this.querySelector("canvas")
 const button = this.querySelector("button")
@@ -94,7 +96,7 @@ bar(0:9, softmax(model(Float32.(transpose(reshape(reinterpret(UInt32, img["data"
 
 
 # ╔═╡ Cell order:
-# ╠═506e96d0-edfa-11ea-2165-17e39b78e479
 # ╟─edd9dcc6-ed60-11ea-24b8-ddabed89f7ce
 # ╟─39bc90b0-ed67-11ea-12f6-5783fe7d3e7a
 # ╟─7cd4a358-ed6a-11ea-1ac6-6f9204a9697a
+# ╟─506e96d0-edfa-11ea-2165-17e39b78e479

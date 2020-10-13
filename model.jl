@@ -11,7 +11,7 @@ end
 
 @with_kw mutable struct Args
     lr::Float64 = 3e-3
-    epochs::Int = 20
+    epochs::Int = 30
     batch_size = 128
     savepath::String = "./" 
 end
@@ -110,6 +110,7 @@ function train(; kws...)
     @info("Beginning training loop...")
     best_acc = 0.0
     last_improvement = 0
+
     for epoch_idx in 1:args.epochs
         # Train for a single epoch
         Flux.train!(loss, params(model), train_set, opt)
@@ -123,7 +124,7 @@ function train(; kws...)
         # Calculate accuracy:
         acc = accuracy(test_set..., model)
 		
-        @info(@sprintf("[%d]: Test accuracy: %.4f", epoch_idx, acc))
+        @info "Test accuracy:" epoch=epoch_idx accuracy=acc
         # If our accuracy is good enough, quit out.
         if acc >= 0.999
             @info(" -> Early-exiting: We reached our target accuracy of 99.9%")

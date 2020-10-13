@@ -9,9 +9,7 @@
 include("model.jl")
 
 args, t = @timed train()
-@show t
-@time acc = test()
-@show acc
+acc = test()
 
 ENV["OUTPUTS"] = """{
     "accuracy": $acc,
@@ -19,4 +17,5 @@ ENV["OUTPUTS"] = """{
     "time": $t
 }"""
 
-ENV["RESULTS_FILE_TO_UPLOAD"] = joinpath(args.savepath, "mnist_conv.bson")
+ENV["RESULTS_FILE_TO_UPLOAD"] =
+    joinpath(args.savepath, "mnist_conv.bson")
