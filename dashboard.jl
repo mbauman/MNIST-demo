@@ -6,41 +6,6 @@ include("model.jl")
 model = build_model(Args())
 Flux.loadparams!(model, BSON.load("mnist_conv.bson")[:params])
 
-## Successful input! — MWE for class-based inputs
-# js = """
-# var custom_components = {
-#     TextInput: class TextInput extends React.Component {
-#         constructor(props) {
-#             super(props);
-#             this.state = {value: ''};
-#             this.update = this.update.bind(this);
-#         }
-#         update(e) {
-#             const newValue = e.target.value;
-#             this.setState({value: newValue});
-#             const {setProps} = this.props;
-#             if (setProps) {
-#                 setProps({value: newValue});
-#             }
-#         }
-#         render() {
-#             const {id, value} = this.props;
-#             return React.createElement('input', {id: id, value: value, onChange: this.update});
-#         }
-#     }
-# };
-# custom_components.TextInput.propTypes = {
-#     id: PropTypes.string,
-#     value: PropTypes.string,
-#     setProps: PropTypes.func
-# };
-# custom_components.TextInput.defaultProps = {
-#     value: ''
-# };
-# """
-
-# Cannot use a class design with <canvas> as it requires hooks... which require function components
-
 macro js_str(str) str end # For nice syntax highlighting in VS Code
 js = js"""
 var custom_components = {
