@@ -1,5 +1,6 @@
 using Dash, DashHtmlComponents, DashCoreComponents, PlotlyBase
 using Base64, BSON
+using Images: imresize
 
 # Load the model definition and the trained model
 include("model.jl")
@@ -85,7 +86,7 @@ custom_components.CanvasInput.defaultProps = {
     buffer: '',
     width: 112,
     height: 112,
-    zoom: 3,
+    zoom: 3
 };
 """
 custom_canvas_input(;id, kwargs...) = Dash.Component("CanvasInput", "CanvasInput", "custom_components", Symbol[:id, :buffer, :width, :height, :zoom], Symbol.(["data-","aria-"]), id=id; kwargs...)
@@ -99,13 +100,14 @@ plotlayout = Layout(xaxis = Dict(:nticks=>10, :tick0=>0, :dtick=>1),
 placeholder = Plot(0:9, ones(10)./10, plotlayout; kind=:bar)
 
 app.layout = html_div() do
-    custom_canvas_input(id="canvas", width=55, height=55, zoom=4),
+    custom_canvas_input(id="canvas", width=112, height=112, zoom=2),
     dcc_graph(id="theplot", figure=placeholder)
 end
 
 callback!(app, Output("theplot", "figure"), Input.("canvas", ["buffer","width","height"])) do x, w, h
     (x === nothing || isempty(x)) && return placeholder
-    probs = softmax(model(Float32.(transpose(reshape(reinterpret(UInt32, base64decode(x)), w, h)) .!= 0xffececff)[round.(Int, range(1, end, length=28)), round.(Int, range(1, end, length=28)), :, :]))
+    img = Float32.(imresize(transpose(reshape(reinterpret(UInt32, base64decode(x)), w, h)) .!= 0xffececff, 28, 28))
+    probs = softmax(model(reshape(img, size(img)..., 1, 1)))
     return Plot(0:9, probs, plotlayout; kind=:bar)
 end
 
