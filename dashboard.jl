@@ -111,4 +111,4 @@ callback!(app, Output("theplot", "figure"), Input.("canvas", ["buffer","width","
     return Plot(0:9, probs, plotlayout; kind=:bar)
 end
 
-run_server(app, "0.0.0.0", 8080)
+run_server(app, "0.0.0.0", something(tryparse(Int, get(ENV, "PORT", "")), 8080))
