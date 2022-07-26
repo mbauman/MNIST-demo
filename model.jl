@@ -9,6 +9,8 @@ if has_cuda()
     CUDA.allowscalar(false)
 end
 
+# some change
+
 @with_kw mutable struct Args
     lr::Float64 = 3e-3
     epochs::Int = 30
